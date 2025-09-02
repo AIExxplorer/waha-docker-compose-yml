@@ -1,32 +1,37 @@
-version: '3.8'
+version: '3'
 
 services:
-  redis:
-    image: 'redis:latest'
-    restart: always
-
   waha:
-    image: devlikeapro/waha
     restart: always
+    container_name: easypanel-n8n-dev-waha
+    image: devlikeapro/whatsapp-http-api:latest
     ports:
-      - "3000:3000"
+      - '8080:80'
+    volumes:
+      - './sessions:/app/sessions'
+      - './media:/app/media'
     environment:
-      #
-      # --- INÍCIO DAS CONFIGURAÇÕES IMPORTANTES ---
-      #
+      - WAHA_API_KEY=321
+      - WAHA_DASHBOARD_USERNAME=admin
+      - WAHA_DASHBOARD_PASSWORD=admin
+      - WHATSAPP_DEFAULT_ENGINE=WEBJS
+      - WAHA_PRINT_QR=false
+      - WAHA_MEDIA_STORAGE=LOCAL
+      - WHATSAPP_FILES_LIFETIME=0
+      - WHATSAPP_FILES_FOLDER=/app/media
+      - WHATSAPP_HOOK_URL=https://easypanel-n8n-dev-n8n.4c1cg4.easypanel.host/webhook/31a1e473-a613-410a-9ccb-da4c5b454e84
+      - PUPPETEER_ARGS=--no-sandbox,--disable-setuid-sandbox,--disable-dev-shm-usage,--disable-gpu,--headless=new
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - CHROME_HEADLESS=true
+      - REDIS_ENABLED=false
 
-      # SUBSTITUA PELA SUA URL DE PRODUÇÃO REAL DO N8N
-      WHATSAPP_HOOK_URL: https://easypanel-n8n-dev-n8n.4cicg4.easypanel.host/webhook/31a1e473-a613-410a-9ccb-da4c5b454e84
-
-      # Habilita os webhooks, OBRIGATÓRIO
-      WAHA_APPS_ENABLED: True
-
-      # Endereço do nosso serviço Redis
-      WAHA_REDIS_URL: redis://redis:6379
-      
-      # Habilita o uso de filas no Redis
-      WAHA_REDIS_EVENTS_QUEUE_ENABLED: True
-      
-      #
-      # --- FIM DAS CONFIGURAÇÕES IMPORTANTES ---
-      #
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: easypanel-n8n-dev-n8n
+    restart: always
+    environment:
+      - WEBHOOK_URL=http://n8n:5678
+    ports:
+      - '5679:5678'
+    volumes:
+      - './n8n_data:/home/node/.n8n'
