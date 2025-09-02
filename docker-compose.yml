@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  redis:
+    image: 'redis:latest'
+    restart: always
+
+  waha:
+    image: devlikeapro/waha
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      #
+      # --- INÍCIO DAS CONFIGURAÇÕES IMPORTANTES ---
+      #
+
+      # SUBSTITUA PELA SUA URL DE PRODUÇÃO REAL DO N8N
+      WHATSAPP_HOOK_URL: https://easypanel-n8n-dev-n8n.4cicg4.easypanel.host/webhook/31a1e473-a613-410a-9ccb-da4c5b454e84
+
+      # Habilita os webhooks, OBRIGATÓRIO
+      WAHA_APPS_ENABLED: True
+
+      # Endereço do nosso serviço Redis
+      WAHA_REDIS_URL: redis://redis:6379
+      
+      # Habilita o uso de filas no Redis
+      WAHA_REDIS_EVENTS_QUEUE_ENABLED: True
+      
+      #
+      # --- FIM DAS CONFIGURAÇÕES IMPORTANTES ---
+      #
