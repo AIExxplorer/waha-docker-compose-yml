@@ -1,4 +1,4 @@
-version: '3'
+# Removida a linha "version: '3'" que está obsoleta
 
 services:
   waha:
